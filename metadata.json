@@ -1,0 +1,6 @@
+{
+  "name": "SMS Gateway",
+  "description": "Professional Android Bulk SMS Gateway connected to campaign portal",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
