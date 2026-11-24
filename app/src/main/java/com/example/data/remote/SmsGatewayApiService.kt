@@ -68,7 +68,8 @@ interface SmsGatewayApiService {
     @GET("jobs")
     suspend fun fetchCampaignJobs(
         @Header("Authorization") token: String,
-        @Query("deviceIdentifier") deviceIdentifier: String
+        @Query("deviceIdentifier") deviceIdentifier: String,
+        @Query("limit") limit: Int
     ): Response<CampaignsResponse>
 
     @POST("status")

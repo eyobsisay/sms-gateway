@@ -121,7 +121,8 @@ class SmsGatewayRepository(context: Context) {
             }
             val api = RetrofitClient.getApiService(config.serverBaseUrl)
             val authHeader = if (config.apiToken.startsWith("Bearer ")) config.apiToken else "Bearer ${config.apiToken}"
-            val response = api.fetchCampaignJobs(authHeader, config.deviceIdentifier)
+            val batchLimit = config.maxBatchSize.coerceIn(1, 50)
+            val response = api.fetchCampaignJobs(authHeader, config.deviceIdentifier, batchLimit)
             if (response.isSuccessful && response.body()?.success == true) {
                 val jobs = response.body()?.jobs ?: emptyList()
                 var addedCount = 0

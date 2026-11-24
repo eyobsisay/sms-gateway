@@ -21,6 +21,7 @@ fun ConfigScreen(viewModel: SmsGatewayViewModel) {
     var deviceName by remember { mutableStateOf("") }
     var pollingInterval by remember { mutableStateOf("5") }
     var sendingDelaySeconds by remember { mutableStateOf("2") }
+    var maxBatchSize by remember { mutableStateOf("10") }
 
     LaunchedEffect(config) {
         config?.let {
@@ -29,6 +30,7 @@ fun ConfigScreen(viewModel: SmsGatewayViewModel) {
             deviceName = it.deviceName
             pollingInterval = it.pollingIntervalMinutes.toString()
             sendingDelaySeconds = (it.sendingDelayMs / 1000L).toString()
+            maxBatchSize = it.maxBatchSize.toString()
         }
     }
 
@@ -73,6 +75,14 @@ fun ConfigScreen(viewModel: SmsGatewayViewModel) {
         )
 
         OutlinedTextField(
+            value = maxBatchSize,
+            onValueChange = { maxBatchSize = it },
+            label = { Text("Jobs Batch Size (per pull)") },
+            supportingText = { Text("How many jobs to request from the portal each pull (1–50)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
             value = pollingInterval,
             onValueChange = { pollingInterval = it },
             label = { Text("Polling Interval (Minutes)") },
@@ -92,14 +102,17 @@ fun ConfigScreen(viewModel: SmsGatewayViewModel) {
         ) {
             Button(
                 onClick = {
+                    val current = config ?: DeviceConfigEntity()
                     val sec = sendingDelaySeconds.toLongOrNull() ?: 2L
+                    val batch = (maxBatchSize.toIntOrNull() ?: 10).coerceIn(1, 50)
                     viewModel.saveDeviceConfig(
-                        DeviceConfigEntity(
+                        current.copy(
                             serverBaseUrl = baseUrl,
                             apiToken = apiToken,
                             deviceName = deviceName,
                             pollingIntervalMinutes = pollingInterval.toIntOrNull() ?: 5,
-                            sendingDelayMs = sec * 1000L
+                            sendingDelayMs = sec * 1000L,
+                            maxBatchSize = batch
                         )
                     )
                 },
